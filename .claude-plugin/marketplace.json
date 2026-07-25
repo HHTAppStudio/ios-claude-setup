@@ -1,0 +1,12 @@
+{
+  "name": "ios-claude-setup",
+  "owner": { "name": "hoanghust", "email": "tayngangcoder@gmail.com" },
+  "description": "Marketplace cho bộ công cụ Claude Code dự án iOS",
+  "plugins": [
+    {
+      "name": "ios-toolkit",
+      "source": "./",
+      "description": "Agents + build/test tiết kiệm token + worktree song song + rules installer cho dự án iOS"
+    }
+  ]
+}

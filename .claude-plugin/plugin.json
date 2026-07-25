@@ -1,0 +1,11 @@
+{
+  "name": "ios-toolkit",
+  "displayName": "iOS Toolkit",
+  "version": "1.0.0",
+  "description": "Bộ công cụ Claude Code cho dự án iOS: agents theo model rẻ, build/test lọc log tiết kiệm token, worktree song song + merge an toàn, SwiftLint hook, và /ios-init để cài rules vào dự án.",
+  "author": { "name": "hoanghust", "email": "tayngangcoder@gmail.com" },
+  "repository": "https://github.com/hoanghust/ios-claude-setup",
+  "license": "MIT",
+  "keywords": ["ios", "swift", "swiftui", "xcode", "worktree"],
+  "hooks": "./hooks/hooks.json"
+}
