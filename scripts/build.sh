@@ -10,9 +10,11 @@ LOG="$LOG_DIR/build-$(date +%Y%m%d-%H%M%S).log"
 echo "Building scheme '$SCHEME_NAME' → log: $LOG"
 set +e
 set -o pipefail
+# Destination generic: chỉ compile, không đụng tới simulator cụ thể
+# → nhiều worktree build song song không tranh nhau máy ảo.
 xcodebuild "$FLAG" "$CONTAINER" \
   -scheme "$SCHEME_NAME" \
-  -destination "$DESTINATION" \
+  -destination "${DESTINATION:-generic/platform=iOS Simulator}" \
   -derivedDataPath "$DERIVED_DATA" \
   -quiet \
   build "$@" 2>&1 | tee "$LOG" | filter_xcode_log

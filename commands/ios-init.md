@@ -19,7 +19,7 @@ cp -n "${CLAUDE_PLUGIN_ROOT}/templates/rules/"*.md .claude/rules/
 
 4. Tự động điền config thay vì để trống:
    - Chạy `xcodebuild -list` để lấy scheme, điền `SCHEME` vào `.claude/ios.env`.
-   - Chạy `xcrun simctl list devices available | grep iPhone | head -3` và chọn simulator mới nhất cho `DESTINATION`.
+   - Chạy `xcrun simctl list devicetypes | grep iPhone | tail -5`, chọn device type iPhone mới nhất có trên máy, điền vào `SIM_DEVICE` (KHÔNG đặt `DESTINATION` — để trống cho cơ chế simulator-riêng-mỗi-worktree hoạt động).
    - Điền `MAIN_BRANCH` từ branch hiện tại hoặc origin/HEAD.
    - Điền phần **Project** trong `CLAUDE.md` (iOS target, devices, architecture) bằng cách đọc nhanh project settings — hỏi người dùng phần không tự suy ra được.
 

@@ -84,7 +84,22 @@ cd ../<repo>-worktrees/fix-player-crash && claude
 /wt-merge add-settings-screen     # tự rebase lên kết quả merge trước
 ```
 
-An toàn merge do `scripts/wt.sh` đảm bảo: từ chối khi working tree bẩn; rebase trước, conflict thì abort chứ không merge bừa; build verify sau rebase (bật thêm test: `MERGE_REQUIRE_TESTS=1` trong `.claude/ios.env`); merge `--no-ff` để revert được nguyên task. Mỗi worktree có DerivedData riêng (`.derived-data/`) nên build song song không phá cache của nhau.
+An toàn merge do `scripts/wt.sh` đảm bảo: từ chối khi working tree bẩn; rebase trước, conflict thì abort chứ không merge bừa; build verify sau rebase (bật thêm test: `MERGE_REQUIRE_TESTS=1` trong `.claude/ios.env`); merge `--no-ff` để revert được nguyên task.
+
+## Vì sao build song song không đụng nhau
+
+Các xung đột kinh điển khi chạy nhiều worktree iOS cùng lúc đều đã được xử lý trong scripts:
+
+| Xung đột | Cách xử lý |
+|---|---|
+| DerivedData chung | Mỗi worktree có `.derived-data/` riêng |
+| Hai phiên test tranh một simulator | `test.sh` tự tạo **simulator riêng cho mỗi worktree** (đặt tên theo hash path, tạo từ `SIM_DEVICE`); `/wt-clean` tự xoá máy ảo đó |
+| Build tranh simulator | `build.sh` dùng destination `generic/platform=iOS Simulator` — chỉ compile, không đụng máy ảo nào |
+| Worktree mới thiếu `Pods/` | `wt.sh new` tự chạy `pod install` nếu có Podfile |
+| SPM package cache chung | SPM tự lock (`~/Library/Caches/org.swift.swiftpm`), an toàn; package checkout nằm trong DerivedData riêng của từng worktree |
+| Log lẫn nhau | Log ghi vào `.claude/logs/` của từng worktree |
+
+Đã kiểm chứng bằng cách build song song 2 worktree trên một dự án iOS thật.
 
 ## Phát hành / cập nhật plugin
 

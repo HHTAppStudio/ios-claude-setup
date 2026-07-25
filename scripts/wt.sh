@@ -41,6 +41,15 @@ case "$cmd" in
         cp "$ROOT/$f" "$path/$f"
       fi
     done
+    # CocoaPods: Pods/ thường không được commit → worktree mới phải install lại
+    if [ -f "$path/Podfile" ]; then
+      if command -v pod >/dev/null 2>&1; then
+        echo "==> Podfile phát hiện — chạy pod install cho worktree mới"
+        (cd "$path" && pod install) || echo "WARNING: pod install fail — chạy tay: cd $path && pod install" >&2
+      else
+        echo "WARNING: dự án dùng CocoaPods nhưng máy chưa có lệnh 'pod' — build sẽ fail nếu thiếu Pods/." >&2
+      fi
+    fi
     echo ""
     echo "✓ Worktree sẵn sàng: $path (branch $branch, từ $MAIN)"
     echo "  Chạy phiên Claude song song:  cd $path && claude"
@@ -100,7 +109,14 @@ case "$cmd" in
         exit 1
       fi
     fi
-    [ -d "$path" ] && git -C "$ROOT" worktree remove ${force:+--force} "$path"
+    # Xoá simulator riêng của worktree này (nếu từng được tạo cho test)
+    xcrun simctl delete "$(sim_name_for "$path")" >/dev/null 2>&1 || true
+    if [ -d "$path" ]; then
+      git -C "$ROOT" worktree remove ${force:+--force} "$path" || {
+        echo "ERROR: worktree còn thay đổi chưa commit hoặc file untracked. Kiểm tra lại, hoặc dùng '-f' để bỏ hẳn." >&2
+        exit 1
+      }
+    fi
     git -C "$ROOT" branch ${force:+-D} ${force:--d} "$branch" 2>/dev/null || true
     git -C "$ROOT" worktree prune
     echo "✓ Đã xoá worktree + branch $branch"

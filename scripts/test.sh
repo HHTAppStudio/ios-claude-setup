@@ -7,12 +7,22 @@ IFS='|' read -r FLAG CONTAINER <<< "$(detect_container)"
 SCHEME_NAME="$(detect_scheme)"
 LOG="$LOG_DIR/test-$(date +%Y%m%d-%H%M%S).log"
 
-echo "Testing scheme '$SCHEME_NAME' → log: $LOG"
+# Test cần simulator cụ thể → dùng máy ảo RIÊNG của worktree này (tự tạo nếu chưa có)
+# để nhiều worktree test song song không tranh nhau. DESTINATION trong ios.env (nếu đặt)
+# sẽ override — khi đó bạn tự chịu trách nhiệm tránh trùng simulator giữa các worktree.
+if [ -n "${DESTINATION:-}" ]; then
+  TEST_DEST="$DESTINATION"
+else
+  SIM_UDID="$(ensure_sim)" || exit 1
+  TEST_DEST="platform=iOS Simulator,id=$SIM_UDID"
+fi
+
+echo "Testing scheme '$SCHEME_NAME' (destination: $TEST_DEST) → log: $LOG"
 set +e
 set -o pipefail
 xcodebuild "$FLAG" "$CONTAINER" \
   -scheme "$SCHEME_NAME" \
-  -destination "$DESTINATION" \
+  -destination "$TEST_DEST" \
   -derivedDataPath "$DERIVED_DATA" \
   -quiet \
   test "$@" 2>&1 | tee "$LOG" | filter_xcode_log
