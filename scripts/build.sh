@@ -3,7 +3,10 @@
 # Usage: ./scripts/build.sh [extra xcodebuild args...]
 source "$(dirname "$0")/_common.sh"
 
-IFS='|' read -r FLAG CONTAINER <<< "$(detect_container)"
+# Gán qua biến trung gian để lỗi trong detect_container dừng script (set -e
+# không lan qua command substitution nằm trong `read <<< "$(...)"`).
+CONTAINER_LINE="$(detect_container)"
+IFS='|' read -r FLAG CONTAINER <<< "$CONTAINER_LINE"
 SCHEME_NAME="$(detect_scheme)"
 LOG="$LOG_DIR/build-$(date +%Y%m%d-%H%M%S).log"
 
@@ -26,6 +29,6 @@ if [ "$STATUS" -eq 0 ]; then
 else
   echo "BUILD FAILED (exit $STATUS). Full log: $LOG"
   echo "--- Errors ---"
-  grep -E "error:" "$LOG" | sort -u | head -30
+  grep -E "error:" "$LOG" | sort -u | head -30 || true
 fi
 exit "$STATUS"

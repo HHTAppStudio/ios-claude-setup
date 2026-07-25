@@ -103,6 +103,10 @@ case "$cmd" in
     branch="claude/$name"
     path="$WT_BASE/$name"
     force="${3:-}"
+    if [ -n "$force" ] && [ "$force" != "-f" ]; then
+      echo "ERROR: tham số không hợp lệ '$force' (chỉ chấp nhận '-f')." >&2
+      usage
+    fi
     if [ "$force" != "-f" ]; then
       if ! git -C "$ROOT" merge-base --is-ancestor "$branch" "$MAIN" 2>/dev/null; then
         echo "ERROR: $branch chưa merge vào $MAIN. Dùng '-f' nếu chắc chắn muốn bỏ." >&2
@@ -117,7 +121,8 @@ case "$cmd" in
         exit 1
       }
     fi
-    git -C "$ROOT" branch ${force:+-D} ${force:--d} "$branch" 2>/dev/null || true
+    del_flag="-d"; [ -n "$force" ] && del_flag="-D"
+    git -C "$ROOT" branch "$del_flag" "$branch" 2>/dev/null || true
     git -C "$ROOT" worktree prune
     echo "✓ Đã xoá worktree + branch $branch"
     ;;

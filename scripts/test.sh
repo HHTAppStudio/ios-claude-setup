@@ -3,7 +3,8 @@
 # Usage: ./scripts/test.sh [-only-testing:Target/Class/testMethod] [extra args...]
 source "$(dirname "$0")/_common.sh"
 
-IFS='|' read -r FLAG CONTAINER <<< "$(detect_container)"
+CONTAINER_LINE="$(detect_container)"
+IFS='|' read -r FLAG CONTAINER <<< "$CONTAINER_LINE"
 SCHEME_NAME="$(detect_scheme)"
 LOG="$LOG_DIR/test-$(date +%Y%m%d-%H%M%S).log"
 
@@ -37,6 +38,6 @@ if [ "$STATUS" -eq 0 ]; then
 else
   echo "TESTS FAILED (exit $STATUS, ${FAILS:-?} case failed). Full log: $LOG"
   echo "--- Failed cases ---"
-  grep -E "Test Case .* failed|error:|XCTAssert" "$LOG" | sort -u | head -40
+  grep -E "Test Case .* failed|error:|XCTAssert" "$LOG" | sort -u | head -40 || true
 fi
 exit "$STATUS"

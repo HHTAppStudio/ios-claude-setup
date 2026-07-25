@@ -28,10 +28,10 @@ ensure_sim() {
   local sim_name udid devtype_id
   sim_name="$(sim_name_for "$ROOT")"
   udid=$(xcrun simctl list devices available | grep -F "$sim_name (" | head -1 \
-    | sed -E 's/.*\(([0-9A-Fa-f-]{36})\).*/\1/')
+    | sed -E 's/.*\(([0-9A-Fa-f-]{36})\).*/\1/' || true)
   if [ -z "$udid" ]; then
     devtype_id=$(xcrun simctl list devicetypes | grep -F "$SIM_DEVICE (" | head -1 \
-      | sed -E 's/.*\((com\.apple[^)]+)\).*/\1/')
+      | sed -E 's/.*\((com\.apple[^)]+)\).*/\1/' || true)
     if [ -z "$devtype_id" ]; then
       echo "ERROR: không tìm thấy device type '$SIM_DEVICE' (xem: xcrun simctl list devicetypes)" >&2
       return 1
@@ -59,14 +59,19 @@ detect_scheme() {
   if [ -n "${SCHEME:-}" ]; then echo "$SCHEME"; return; fi
   IFS='|' read -r flag container <<< "$(detect_container)"
   xcodebuild "$flag" "$container" -list 2>/dev/null \
-    | sed -n '/Schemes:/,/^$/p' | sed '1d' | sed 's/^ *//' | grep -v '^$' | head -1
+    | sed -n '/Schemes:/,/^$/p' | sed '1d' | sed 's/^ *//' | grep -v '^$' | head -1 || true
 }
 
 main_branch() {
   if [ -n "${MAIN_BRANCH:-}" ]; then echo "$MAIN_BRANCH"; return; fi
-  git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' \
-    || { git show-ref --verify --quiet refs/heads/main && echo main; } \
-    || echo master
+  local b
+  b=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || true)
+  if [ -n "$b" ]; then echo "$b"; return; fi
+  for b in main master; do
+    if git show-ref --verify --quiet "refs/heads/$b"; then echo "$b"; return; fi
+  done
+  echo "ERROR: không xác định được nhánh chính — đặt MAIN_BRANCH trong .claude/ios.env" >&2
+  return 1
 }
 
 # Lọc log xcodebuild: chỉ giữ error/warning/kết quả test — phần Claude cần đọc.

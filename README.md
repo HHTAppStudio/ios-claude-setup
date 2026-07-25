@@ -9,7 +9,7 @@ Plugin Claude Code dùng chung cho các dự án iOS (Swift/SwiftUI), cài trự
 ## Cài đặt
 
 ```
-/plugin marketplace add hoanghust/ios-claude-setup
+/plugin marketplace add HHTAppStudio/ios-claude-setup
 /plugin install ios-toolkit@ios-claude-setup
 ```
 
@@ -103,7 +103,7 @@ Các xung đột kinh điển khi chạy nhiều worktree iOS cùng lúc đều 
 
 ## Phát hành / cập nhật plugin
 
-- Push repo này lên GitHub (`hoanghust/ios-claude-setup`).
+- Repo public: `HHTAppStudio/ios-claude-setup`.
 - Tăng `version` trong `.claude-plugin/plugin.json` khi có thay đổi.
 - Người dùng cập nhật: `/plugin marketplace update ios-claude-setup` rồi cài lại plugin.
 - Test local trước khi push: `/plugin marketplace add /đường/dẫn/tới/repo-này`.
