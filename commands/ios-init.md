@@ -23,6 +23,12 @@ cp -n "${CLAUDE_PLUGIN_ROOT}/templates/rules/"*.md .claude/rules/
    - Điền `MAIN_BRANCH` từ branch hiện tại hoặc origin/HEAD.
    - Điền phần **Project** trong `CLAUDE.md` (iOS target, devices, architecture) bằng cách đọc nhanh project settings — hỏi người dùng phần không tự suy ra được.
 
-5. Nhắc người dùng: các placeholder trong `.claude/rules/*.md` (architecture, integrations…) cần điền theo dự án — đề nghị giúp điền luôn bằng cách khảo sát codebase (giao agent `explorer`).
+5. Kiểm tra platform nhất quán giữa các target (app, Tests, UITests):
+```bash
+grep -n "IPHONEOS_DEPLOYMENT_TARGET\|TARGETED_DEVICE_FAMILY\|SUPPORTED_PLATFORMS" *.xcodeproj/project.pbxproj
+```
+   Mặc định khuyến nghị: `IPHONEOS_DEPLOYMENT_TARGET` giống nhau ở mọi target, `TARGETED_DEVICE_FAMILY = "1,2"` (iPhone + iPad), `SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"`. Xcode hay để target Tests/UITests ở deployment target mới nhất và device family kèm `7` (Vision) — báo người dùng và đề nghị sửa cho khớp app target (sửa xong phải `/build` lại). KHÔNG tự sửa khi chưa được đồng ý.
 
-6. Verify: chạy `"${CLAUDE_PLUGIN_ROOT}/scripts/build.sh"` — pass là cài đặt xong.
+6. Nhắc người dùng: các placeholder trong `.claude/rules/*.md` (architecture, integrations…) cần điền theo dự án — đề nghị giúp điền luôn bằng cách khảo sát codebase (giao agent `explorer`).
+
+7. Verify: chạy `"${CLAUDE_PLUGIN_ROOT}/scripts/build.sh"` — pass là cài đặt xong.

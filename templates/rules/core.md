@@ -8,5 +8,6 @@
 4. Mỗi mutable state có đúng một owner.
 5. Code giữ trong feature trừ khi việc tái sử dụng đã được chứng minh.
 6. Không tạo abstraction khi chưa có lợi ích rõ.
-7. UI thay đổi phải cân nhắc mọi device được hỗ trợ.
-8. Nêu rõ giả định, rủi ro, và phần chưa validate.
+7. UI thay đổi phải cân nhắc mọi device được hỗ trợ (mặc định iPhone + iPad).
+8. Platform mặc định là iOS + iPadOS, deployment target 16.0 — cho MỌI target kể cả Tests/UITests. KHÔNG tự nâng target hay thêm platform (macOS/visionOS/Catalyst) để làm cho code compile; API mới hơn thì tìm cách thay thế, hoặc dừng và hỏi.
+9. Nêu rõ giả định, rủi ro, và phần chưa validate.
