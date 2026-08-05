@@ -20,7 +20,8 @@ Rules của dự án nằm trong `.claude/rules/` và được Claude Code tự 
 
 ## Token Policy (bắt buộc)
 
-- KHÔNG chạy `xcodebuild` trực tiếp. Luôn dùng lệnh `/build` và `/test` của plugin ios-toolkit — chúng ghi full log ra file và chỉ in lỗi.
+- KHÔNG chạy `xcodebuild` trực tiếp. Luôn dùng lệnh `/build`, `/test`, `/run` của plugin ios-toolkit — chúng ghi full log ra file và chỉ in lỗi.
+- Thay đổi UI: verify bằng `/run` (chạy app trên simulator + đọc screenshot), không chỉ `/build`.
 - KHÔNG đọc toàn bộ file lớn; đọc đúng range cần thiết.
 - Việc tìm kiếm / khảo sát nhiều file: giao cho agent `explorer` (haiku).
 - Việc sửa lỗi compile lặp lại, chạy test: giao cho agent `builder` / `test-runner` (sonnet).
@@ -48,6 +49,6 @@ Rules của dự án nằm trong `.claude/rules/` và được Claude Code tự 
 ## Done
 
 - Task hoàn thành đúng yêu cầu.
-- `/build` pass (và `/test` nếu chạm logic).
+- `/build` pass (và `/test` nếu chạm logic, `/run` + xem screenshot nếu chạm UI).
 - Placement đúng layer/folder theo architecture.
 - Đã review hoặc nêu rõ gap chưa validate.

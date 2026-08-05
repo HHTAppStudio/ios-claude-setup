@@ -7,7 +7,8 @@ paths:
 
 # Test Rules
 
+- Framework: <!-- chọn theo dự án — Swift Testing (`@Test`/`#expect`, Xcode 16+) hoặc XCTest. Test mới viết theo framework dự án đang dùng, không trộn. -->
 - Test behavior, không test implementation detail.
-- Tên test: `test_<hành vi>_<điều kiện>_<kết quả>`.
+- Tên test: `test_<hành vi>_<điều kiện>_<kết quả>` (XCTest) hoặc mô tả trong `@Test("...")` (Swift Testing).
 - ViewModel test không cần UI; mock service qua protocol.
 - Chạy test bằng lệnh `/test` của plugin ios-toolkit (hỗ trợ `-only-testing:` để khoanh vùng) — không gọi xcodebuild trực tiếp.

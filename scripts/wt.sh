@@ -15,6 +15,13 @@ REPO_NAME="$(basename "$ROOT")"
 WT_BASE="${WORKTREE_BASE:-$(dirname "$ROOT")/${REPO_NAME}-worktrees}"
 MAIN="$(main_branch)"
 
+# Phải chạy từ repo chính: từ worktree phụ, WT_BASE tính sai và checkout nhánh chính sẽ fail.
+if [ "$(git -C "$ROOT" rev-parse --git-dir)" != "$(git -C "$ROOT" rev-parse --git-common-dir)" ]; then
+  echo "ERROR: đang đứng trong worktree phụ ($ROOT)." >&2
+  echo "Chạy wt.sh từ repo chính. Repo chính: $(git -C "$ROOT" rev-parse --git-common-dir | xargs dirname)" >&2
+  exit 1
+fi
+
 usage() { sed -n '2,10p' "$0"; exit 1; }
 
 require_clean() {
@@ -41,6 +48,23 @@ case "$cmd" in
         cp "$ROOT/$f" "$path/$f"
       fi
     done
+    # Dự án generate project (XcodeGen/Tuist): .xcodeproj thường bị gitignore
+    # → worktree mới phải generate lại trước khi build/pod install.
+    if [ -f "$path/project.yml" ] || [ -f "$path/project.yaml" ]; then
+      if command -v xcodegen >/dev/null 2>&1; then
+        echo "==> XcodeGen phát hiện — generate project cho worktree mới"
+        (cd "$path" && xcodegen generate) || echo "WARNING: xcodegen fail — chạy tay: cd $path && xcodegen generate" >&2
+      else
+        echo "WARNING: dự án dùng XcodeGen nhưng máy chưa có 'xcodegen' — build sẽ fail nếu thiếu .xcodeproj." >&2
+      fi
+    elif [ -f "$path/Project.swift" ] || [ -f "$path/Workspace.swift" ]; then
+      if command -v tuist >/dev/null 2>&1; then
+        echo "==> Tuist phát hiện — generate project cho worktree mới"
+        (cd "$path" && tuist generate --no-open) || echo "WARNING: tuist generate fail — chạy tay: cd $path && tuist generate" >&2
+      else
+        echo "WARNING: dự án dùng Tuist nhưng máy chưa có 'tuist' — build sẽ fail nếu thiếu project." >&2
+      fi
+    fi
     # CocoaPods: Pods/ thường không được commit → worktree mới phải install lại
     if [ -f "$path/Podfile" ]; then
       if command -v pod >/dev/null 2>&1; then
@@ -92,6 +116,8 @@ case "$cmd" in
     fi
 
     echo "==> 4/4 Merge --no-ff vào $MAIN"
+    CUR_BRANCH="$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)"
+    [ "$CUR_BRANCH" = "$MAIN" ] || echo "Lưu ý: repo chính đang ở '$CUR_BRANCH' — checkout '$MAIN' để merge."
     git -C "$ROOT" checkout "$MAIN"
     git -C "$ROOT" merge --no-ff "$branch" -m "Merge $branch: $name"
     echo ""

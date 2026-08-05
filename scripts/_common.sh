@@ -43,7 +43,7 @@ ensure_sim() {
 }
 
 detect_container() {
-  # Ưu tiên workspace, fallback project. In ra dạng "-workspace X" hoặc "-project Y".
+  # Ưu tiên workspace > project > Swift package. In ra "-workspace|X", "-project|Y" hoặc "-spm|ROOT".
   if [ -n "${WORKSPACE:-}" ]; then echo "-workspace|$WORKSPACE"; return; fi
   if [ -n "${PROJECT:-}" ]; then echo "-project|$PROJECT"; return; fi
   local ws pj
@@ -51,7 +51,16 @@ detect_container() {
   pj=$(ls -d "$ROOT"/*.xcodeproj 2>/dev/null | head -1 || true)
   if [ -n "$ws" ]; then echo "-workspace|$ws"
   elif [ -n "$pj" ]; then echo "-project|$pj"
-  else echo "ERROR: không tìm thấy .xcworkspace/.xcodeproj trong $ROOT" >&2; exit 1
+  elif [ -f "$ROOT/Package.swift" ]; then echo "-spm|$ROOT"
+  else echo "ERROR: không tìm thấy .xcworkspace/.xcodeproj/Package.swift trong $ROOT" >&2; exit 1
+  fi
+}
+
+# Dừng với hướng dẫn rõ ràng khi không detect được scheme (scheme chưa share là lỗi phổ biến).
+require_scheme() {
+  if [ -z "$1" ]; then
+    echo "ERROR: không detect được scheme. Share scheme trong Xcode (Product → Scheme → Manage Schemes → tick Shared) hoặc đặt SCHEME trong .claude/ios.env." >&2
+    exit 1
   fi
 }
 
@@ -75,10 +84,16 @@ main_branch() {
 }
 
 # Lọc log xcodebuild: chỉ giữ error/warning/kết quả test — phần Claude cần đọc.
+# Nhận diện cả XCTest ("Test Case ... failed") lẫn Swift Testing ("✘ Test ... recorded an issue").
 filter_xcode_log() {
   if command -v xcbeautify >/dev/null 2>&1; then
     xcbeautify --quieter
   else
-    grep -E "(error:|warning:|BUILD (SUCCEEDED|FAILED)|TEST (SUCCEEDED|FAILED)|Test Case .*(failed|passed)|✗|failing)" || true
+    grep -E "(error:|warning:|BUILD (SUCCEEDED|FAILED)|TEST (SUCCEEDED|FAILED)|Test Case .*(failed|passed)|Test [Ss]uite .*(failed|passed)|Test run with .* (passed|failed)|recorded an issue|Expectation failed|✗|✘|failing)" || true
   fi
+}
+
+# Lọc output swift build/test cho Swift package thuần (không qua xcodebuild).
+filter_swift_log() {
+  grep -E "(error:|warning:|Build complete|Compiling|Test run with .* (passed|failed)|Test Suite .*(passed|failed)|Test Case .*(failed|passed)|recorded an issue|✘|✗)" || true
 }

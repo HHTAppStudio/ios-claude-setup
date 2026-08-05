@@ -17,8 +17,11 @@ paths:
 ## SwiftUI
 
 - View nhỏ, tách subview khi body > ~50 dòng.
-- State: `@State` cho UI cục bộ, `@StateObject` cho ViewModel do view sở hữu, `@ObservedObject` khi được inject.
-- Không tạo `@StateObject` trong body hay đưa side effect vào body.
+- Observation: <!-- chọn MỘT theo min deployment target của dự án:
+  - iOS 17+: `@Observable` ViewModel; view giữ bằng `@State`, truyền xuống bằng `@Bindable`.
+  - iOS 16 trở xuống: `ObservableObject` + `@StateObject` (view sở hữu) / `@ObservedObject` (được inject). -->
+- Không tạo ViewModel trong body hay đưa side effect vào body.
+- Theo pattern observation ĐANG CÓ trong codebase — không trộn hai kiểu trong cùng dự án.
 
 ## Combine / Concurrency
 

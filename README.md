@@ -21,7 +21,16 @@ Sau đó trong mỗi dự án iOS, chạy một lần:
 
 `/ios-init` copy rules + config template vào repo (không ghi đè file có sẵn), tự detect scheme/simulator/branch chính để điền `.claude/ios.env`, và giúp điền phần Project trong `CLAUDE.md`. Plugin không tự load được rules vào project — đây là lý do cần bước này.
 
-Khuyến nghị thêm: `brew install xcbeautify swiftlint` (không bắt buộc — scripts tự fallback).
+Khuyến nghị thêm: `brew install xcbeautify swiftlint` (không bắt buộc — scripts tự fallback). Nếu dự án có file config `.swiftformat`, cài thêm `swiftformat` để hook tự format file vừa sửa.
+
+### Hooks tự động
+
+- **Chặn secrets** (PreToolUse): Claude không tự sửa được `.env`, `*.p8/p12/pem/mobileprovision`, `Secrets.swift`, `GoogleService-Info.plist` — tránh lộ/hỏng credential.
+- **Format + lint** (PostToolUse): file `.swift` vừa sửa được SwiftFormat (chỉ khi repo có `.swiftformat`) rồi SwiftLint; warning được đưa lại cho Claude tự sửa.
+
+### Kết hợp với XcodeBuildMCP (tuỳ chọn)
+
+Plugin này thuần shell script — không cần Node/MCP, hoạt động cả trong CI. Nếu bạn cần thêm UI automation (tap/swipe), LLDB debugging, hay deploy lên device thật, cài thêm [XcodeBuildMCP](https://www.xcodebuildmcp.com/) song song — hai bên không xung đột: dùng `/build`, `/test`, `/run` cho vòng lặp hằng ngày (rẻ token, có cách ly worktree), dùng XcodeBuildMCP cho thao tác tương tác sâu.
 
 ## Lệnh
 
@@ -30,10 +39,15 @@ Khuyến nghị thêm: `brew install xcbeautify swiftlint` (không bắt buộc 
 | `/ios-init` | Cài rules + config vào dự án (chạy 1 lần/repo) |
 | `/build` | Build, chỉ in lỗi (full log ra `.claude/logs/`) |
 | `/test [Target/Class]` | Chạy test khoanh vùng hoặc full suite |
+| `/run` | Build + chạy app trên simulator, chụp screenshot để Claude kiểm tra UI |
+| `/clean` | Xoá DerivedData của worktree + dọn log cũ (khi nghi lỗi cache) |
+| `/feature-new <Tên>` | Scaffold feature mới theo chuẩn MVVM + convention có sẵn của dự án |
 | `/wt-new <tên>` | Tạo worktree + branch `claude/<tên>` để làm song song |
 | `/wt-list` | Trạng thái các worktree (ahead/behind, đã merge chưa) |
 | `/wt-merge <tên>` | Review → rebase → build verify → merge --no-ff |
 | `/wt-clean <tên>` | Xoá worktree + branch đã merge |
+
+Hỗ trợ các loại dự án: `.xcworkspace` / `.xcodeproj`, Swift package thuần (`swift build`/`swift test`), dự án generate project bằng **XcodeGen/Tuist** (worktree mới tự generate), CocoaPods (worktree mới tự `pod install`). Output test nhận diện cả **XCTest** lẫn **Swift Testing** (Xcode 16+).
 
 ## Agents (model routing)
 
@@ -54,8 +68,8 @@ Khuyến nghị thêm: `brew install xcbeautify swiftlint` (không bắt buộc 
 └── marketplace.json         # repo này đồng thời là marketplace (source: "./")
 commands/                    # slash commands (ios-init, build, test, wt-*)
 agents/                      # 6 subagent có gán model
-hooks/hooks.json             # PostToolUse → SwiftLint file .swift vừa sửa
-scripts/                     # build.sh, test.sh, wt.sh, _common.sh, lint-changed.sh
+hooks/hooks.json             # PreToolUse → chặn sửa file secrets; PostToolUse → SwiftFormat + SwiftLint file .swift vừa sửa
+scripts/                     # build.sh, test.sh, run.sh, clean.sh, wt.sh, _common.sh, lint-changed.sh, protect-secrets.sh
 templates/                   # /ios-init copy vào dự án
 ├── CLAUDE.md                # project facts + token policy + workflow
 ├── ios.env                  # SCHEME, DESTINATION, MAIN_BRANCH…

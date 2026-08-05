@@ -5,6 +5,16 @@ set -uo pipefail
 
 file=$(python3 -c 'import json,sys; print(json.load(sys.stdin).get("tool_input",{}).get("file_path",""))' 2>/dev/null || echo "")
 [[ "$file" == *.swift && -f "$file" ]] || exit 0
+
+# Auto-format bằng SwiftFormat — CHỈ khi dự án có config .swiftformat
+# (tôn trọng style team đã chọn, không tự áp đặt default).
+if command -v swiftformat >/dev/null 2>&1; then
+  repo_root="$(cd "$(dirname "$file")" && git rev-parse --show-toplevel 2>/dev/null || true)"
+  if [ -n "$repo_root" ] && [ -f "$repo_root/.swiftformat" ]; then
+    swiftformat --quiet "$file" >/dev/null 2>&1 || true
+  fi
+fi
+
 command -v swiftlint >/dev/null 2>&1 || exit 0
 
 out=$(swiftlint lint --quiet "$file" 2>/dev/null | head -20)

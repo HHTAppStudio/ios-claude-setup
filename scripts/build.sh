@@ -7,8 +7,28 @@ source "$(dirname "$0")/_common.sh"
 # không lan qua command substitution nằm trong `read <<< "$(...)"`).
 CONTAINER_LINE="$(detect_container)"
 IFS='|' read -r FLAG CONTAINER <<< "$CONTAINER_LINE"
-SCHEME_NAME="$(detect_scheme)"
 LOG="$LOG_DIR/build-$(date +%Y%m%d-%H%M%S).log"
+
+# Swift package thuần (không có xcodeproj/xcworkspace) → swift build
+if [ "$FLAG" = "-spm" ]; then
+  echo "Swift package — 'swift build' → log: $LOG"
+  set +e
+  set -o pipefail
+  swift build --package-path "$ROOT" "$@" 2>&1 | tee "$LOG" | filter_swift_log
+  STATUS=${PIPESTATUS[0]}
+  set -e
+  if [ "$STATUS" -eq 0 ]; then
+    echo "BUILD SUCCEEDED"
+  else
+    echo "BUILD FAILED (exit $STATUS). Full log: $LOG"
+    echo "--- Errors ---"
+    grep -E "error:" "$LOG" | sort -u | head -30 || true
+  fi
+  exit "$STATUS"
+fi
+
+SCHEME_NAME="$(detect_scheme)"
+require_scheme "$SCHEME_NAME"
 
 echo "Building scheme '$SCHEME_NAME' → log: $LOG"
 set +e
