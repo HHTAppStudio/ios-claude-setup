@@ -36,7 +36,18 @@ if [ "$STATUS" -ne 0 ]; then
   exit "$STATUS"
 fi
 
-APP_PATH=$(find "$DERIVED_DATA/Build/Products" -maxdepth 2 -name "*.app" -path "*iphonesimulator*" 2>/dev/null | head -1)
+# Products/ chứa cả app LẪN runner của UITests ("<Scheme>UITests-Runner.app",
+# bundle id "…UITests.xctrunner"). Thứ tự `find` là thứ tự thư mục chứ không
+# sắp xếp, nên `| head -1` có lúc bốc trúng runner: /run cài + launch runner,
+# app thật không bao giờ chạy và screenshot ra màn hình Home. Ưu tiên .app
+# trùng tên scheme, fallback thì loại hẳn runner/test bundle.
+APP_PATH=""
+for CANDIDATE in "$DERIVED_DATA/Build/Products"/*-iphonesimulator/"$SCHEME_NAME.app"; do
+  [ -d "$CANDIDATE" ] && { APP_PATH="$CANDIDATE"; break; }
+done
+# PRODUCT_NAME có thể khác tên scheme — khi đó dò tìm, trừ runner ra.
+[ -n "$APP_PATH" ] || APP_PATH=$(find "$DERIVED_DATA/Build/Products" -maxdepth 2 -name "*.app" -path "*iphonesimulator*" \
+  ! -name "*-Runner.app" ! -name "*Tests.app" 2>/dev/null | head -1)
 [ -n "$APP_PATH" ] || { echo "ERROR: không tìm thấy .app trong $DERIVED_DATA/Build/Products (scheme có phải app target?)" >&2; exit 1; }
 BUNDLE_ID=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP_PATH/Info.plist")
 
