@@ -10,9 +10,9 @@ paths:
 ## Layers
 
 - **View** (SwiftUI): chỉ render + forward action. Không business logic, không gọi service trực tiếp.
-- **ViewModel** (ObservableObject): state + logic của một màn hình. Owner duy nhất của state màn hình đó.
-- **Service / Repository**: nghiệp vụ và data access, không biết gì về UI.
-- **Model**: struct thuần, không dependency.
+- **ViewModel** (`@Observable`): state + logic của một màn hình. Owner duy nhất của state màn hình đó.
+- **Service / Repository**: nghiệp vụ và data access (database local = SwiftData), không biết gì về UI.
+- **Model**: struct thuần, không dependency. Ngoại lệ: `@Model` class của SwiftData cho dữ liệu lưu local.
 
 ## Ownership & Dependency
 

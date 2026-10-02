@@ -17,9 +17,16 @@ paths:
 ## SwiftUI
 
 - View nhỏ, tách subview khi body > ~50 dòng.
-- Observation (target 16.0): `ObservableObject` + `@StateObject` (view sở hữu) / `@ObservedObject` (được inject). <!-- Chỉ đổi sang `@Observable` + `@State`/`@Bindable` nếu dự án nâng min target lên iOS 17+. -->
+- Observation (target 17.0): `@Observable` + `@State` (view sở hữu) / `@Bindable` (cần binding) / truyền thẳng (chỉ đọc). Dự án cũ đang dùng `ObservableObject` → theo rule bên dưới, không tự migrate.
 - Không tạo ViewModel trong body hay đưa side effect vào body.
 - Theo pattern observation ĐANG CÓ trong codebase — không trộn hai kiểu trong cùng dự án.
+
+## Persistence (SwiftData)
+
+- Database local mặc định là SwiftData. Có sẵn Core Data/khác trong dự án → theo cái đang có, không trộn.
+- `ModelContainer` tạo một lần ở `App/`, inject vào Service/Repository qua init.
+- `ModelContext` chỉ dùng trong Service/Repository; ViewModel gọi repository, View không đụng context.
+- Đổi schema `@Model` đã ship → thêm `VersionedSchema` + migration plan, không sửa thẳng.
 
 ## Combine / Concurrency
 

@@ -10,7 +10,7 @@ Tạo feature mới: $ARGUMENTS
 2. Khảo sát 1 feature có sẵn gần giống nhất (giao agent `explorer` nếu cần quét nhiều) để bắt chước convention thực tế: naming, cách inject dependency, cách đăng ký navigation.
 3. Tạo file:
    - `<Tên>View.swift` — view tối thiểu bind vào ViewModel.
-   - `<Tên>ViewModel.swift` — state + action rỗng theo pattern dự án đang dùng (`ObservableObject` hay `@Observable` — nhìn code có sẵn, đừng đoán).
+   - `<Tên>ViewModel.swift` — state + action rỗng theo pattern dự án đang dùng (`@Observable` hay `ObservableObject` — nhìn code có sẵn, đừng đoán; dự án mới mặc định `@Observable`).
    - Đăng ký route/navigation nếu dự án có router.
 4. Tạo test stub cho ViewModel theo framework test dự án đang dùng (XCTest hay Swift Testing — nhìn test có sẵn).
 5. Chạy `/build`; pass thì báo lại danh sách file đã tạo + việc còn lại người dùng cần quyết (nội dung màn hình, service).

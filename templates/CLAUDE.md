@@ -5,8 +5,9 @@
 <!-- Điền thông tin dự án khi cài vào repo. Giữ ngắn — mỗi dòng một fact. -->
 - iOS app
 - Swift, SwiftUI, Combine
-- **Platform mặc định: iOS + iPadOS, deployment target 16.0** — áp dụng cho MỌI target (app, Tests, UITests): `IPHONEOS_DEPLOYMENT_TARGET = 16.0`, `TARGETED_DEVICE_FAMILY = "1,2"`, `SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"`, `SDKROOT = iphoneos`. Đổi được, nhưng phải là quyết định product — Claude không tự đổi.
+- **Platform mặc định: iOS + iPadOS, deployment target 17.0** — áp dụng cho MỌI target (app, Tests, UITests): `IPHONEOS_DEPLOYMENT_TARGET = 17.0`, `TARGETED_DEVICE_FAMILY = "1,2"`, `SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"`, `SDKROOT = iphoneos`. Đổi được, nhưng phải là quyết định product — Claude không tự đổi.
 - Devices: iPhone, iPad
+- Database local mặc định: **SwiftData** (không dùng Core Data / Realm / SQLite wrapper trừ khi dự án đã có sẵn).
 - Architecture: MVVM + feature-first
 - Scheme chính: xem `.claude/ios.env`
 
