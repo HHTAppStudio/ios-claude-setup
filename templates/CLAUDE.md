@@ -8,6 +8,7 @@
 - **Platform mặc định: iOS + iPadOS, deployment target 17.0** — áp dụng cho MỌI target (app, Tests, UITests): `IPHONEOS_DEPLOYMENT_TARGET = 17.0`, `TARGETED_DEVICE_FAMILY = "1,2"`, `SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"`, `SDKROOT = iphoneos`. Đổi được, nhưng phải là quyết định product — Claude không tự đổi.
 - Devices: iPhone, iPad
 - Database local mặc định: **SwiftData** (không dùng Core Data / Realm / SQLite wrapper trừ khi dự án đã có sẵn).
+- SDK chung (không cài sẵn, thêm khi feature cần và luôn được ưu tiên): AdsKit, AnalyticsKit, NetworkSDK, PurchaseKit, Kingfisher — xem `.claude/rules/integrations.md`.
 - Architecture: MVVM + feature-first
 - Scheme chính: xem `.claude/ios.env`
 
@@ -16,7 +17,7 @@
 Rules của dự án nằm trong `.claude/rules/` và được Claude Code tự load:
 
 - `core.md` — rule chung, luôn được load.
-- Các rule còn lại có `paths` frontmatter, chỉ tự load khi đụng vào file khớp glob (Swift code → architecture, folder-structure, swift-coding; test → tests; Features/ → feature-scaffold; Services//plist → integrations).
+- Các rule còn lại có `paths` frontmatter, chỉ tự load khi đụng vào file khớp glob (Swift code → architecture, folder-structure, swift-coding; test → tests; Features/ → feature-scaffold; Services/, plist, pbxproj → integrations).
 - KHÔNG cần chủ động đọc `.claude/rules/` — cơ chế auto-load lo việc đó. Khi thêm rule mới, path-scope nó nếu có thể.
 
 ## Token Policy (bắt buộc)

@@ -80,7 +80,7 @@ templates/                   # /ios-init copy vào dự án
     ├── swift-coding.md      #   load khi đụng *.swift
     ├── tests.md             #   load khi đụng *Tests*
     ├── feature-scaffold.md  #   load khi đụng Features/
-    └── integrations.md      #   load khi đụng Services/, *.plist, Podfile…
+    └── integrations.md      #   load khi đụng Services/, *.plist, *.pbxproj, Podfile… — SDK chung (AdsKit, AnalyticsKit, NetworkSDK, PurchaseKit, Kingfisher)
 ```
 
 ## Workflow song song

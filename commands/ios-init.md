@@ -29,6 +29,6 @@ grep -n "IPHONEOS_DEPLOYMENT_TARGET\|TARGETED_DEVICE_FAMILY\|SUPPORTED_PLATFORMS
 ```
    Mặc định khuyến nghị: `IPHONEOS_DEPLOYMENT_TARGET` giống nhau ở mọi target, `TARGETED_DEVICE_FAMILY = "1,2"` (iPhone + iPad), `SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"`. Xcode hay để target Tests/UITests ở deployment target mới nhất và device family kèm `7` (Vision) — báo người dùng và đề nghị sửa cho khớp app target (sửa xong phải `/build` lại). KHÔNG tự sửa khi chưa được đồng ý.
 
-6. Nhắc người dùng: các placeholder trong `.claude/rules/*.md` (architecture, integrations…) cần điền theo dự án — đề nghị giúp điền luôn bằng cách khảo sát codebase (giao agent `explorer`).
+6. Nhắc người dùng: các placeholder trong `.claude/rules/*.md` (architecture, integrations…) cần điền theo dự án — đề nghị giúp điền luôn bằng cách khảo sát codebase (giao agent `explorer`). KHÔNG cài SDK chung nào trong `integrations.md` ở bước init — chúng chỉ được thêm khi một feature cần tới.
 
 7. Verify: chạy `"${CLAUDE_PLUGIN_ROOT}/scripts/build.sh"` — pass là cài đặt xong.
