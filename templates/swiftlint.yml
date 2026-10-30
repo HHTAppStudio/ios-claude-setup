@@ -1,0 +1,24 @@
+# Cài vào dự án mới thành .swiftlint.yml bằng /ios-init. Hook lint-changed bắt Claude
+# sửa MỌI vi phạm trong file vừa đụng, nên chỉ giữ rule về lỗi thật: rule về độ dài
+# và cách đặt tên tắt hết, nếu không Claude sẽ sửa lan ra phần không liên quan.
+excluded:
+  - Pods
+  - .build
+  - .derived-data
+  - DerivedData
+
+disabled_rules:
+  - cyclomatic_complexity
+  - file_length
+  - function_body_length
+  - function_parameter_count
+  - identifier_name
+  - large_tuple
+  - line_length
+  - multiple_closures_with_trailing_closure
+  - nesting
+  - opening_brace # SwiftFormat tự xuống dòng dấu { nên hai bên sửa qua sửa lại
+  - todo
+  - trailing_comma # SwiftFormat tự thêm dấu phẩy cuối
+  - type_body_length
+  - type_name

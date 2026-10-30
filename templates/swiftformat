@@ -1,0 +1,5 @@
+# Cài vào dự án mới thành .swiftformat bằng /ios-init.
+--swiftversion 5.9
+--indent 4
+--maxwidth none
+--exclude Pods,.build,.derived-data,DerivedData

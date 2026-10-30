@@ -68,11 +68,13 @@ Hỗ trợ các loại dự án: `.xcworkspace` / `.xcodeproj`, Swift package th
 └── marketplace.json         # repo này đồng thời là marketplace (source: "./")
 commands/                    # slash commands (ios-init, build, test, wt-*)
 agents/                      # 6 subagent có gán model
-hooks/hooks.json             # PreToolUse → chặn sửa file secrets; PostToolUse → SwiftFormat + SwiftLint file .swift vừa sửa
+hooks/hooks.json             # PreToolUse → chặn sửa file secrets; PostToolUse → SwiftFormat + SwiftLint file .swift vừa sửa, chỉ khi dự án có config
 scripts/                     # build.sh, test.sh, run.sh, clean.sh, wt.sh, _common.sh, lint-changed.sh, protect-secrets.sh
 templates/                   # /ios-init copy vào dự án
 ├── CLAUDE.md                # project facts + token policy + workflow
 ├── ios.env                  # SCHEME, DESTINATION, MAIN_BRANCH…
+├── swiftformat              # thành .swiftformat ở dự án mới (dự án cũ đã init thì không tạo)
+├── swiftlint.yml            # thành .swiftlint.yml ở dự án mới (dự án cũ đã init thì không tạo)
 └── rules/                   # path-scoped rules (.claude/rules/ của dự án)
     ├── core.md              #   luôn load
     ├── architecture.md      #   load khi đụng *.swift

@@ -1,13 +1,13 @@
 ---
 description: Cài rules + config của ios-toolkit vào dự án hiện tại (chạy 1 lần cho mỗi repo)
-allowed-tools: Bash, Read, Edit, Write
+allowed-tools: Bash, Read, Edit, Write, AskUserQuestion
 ---
 
 Cài đặt ios-toolkit vào dự án hiện tại. Plugin không tự load được rules nên bước này copy chúng vào repo.
 
 1. Kiểm tra đây là git repo có `.xcodeproj`/`.xcworkspace`. Nếu không, báo và dừng.
 
-2. Copy template (KHÔNG ghi đè file đã tồn tại):
+2. Ghi nhận TRƯỚC khi copy: `.claude/ios.env` đã có chưa — có nghĩa là dự án cũ đã init (dùng ở bước 6). Rồi copy template (KHÔNG ghi đè file đã tồn tại):
 ```bash
 mkdir -p .claude/rules
 for f in "${CLAUDE_PLUGIN_ROOT}/templates/rules/"*.md; do
@@ -35,6 +35,18 @@ grep -n "IPHONEOS_DEPLOYMENT_TARGET\|TARGETED_DEVICE_FAMILY\|SUPPORTED_PLATFORMS
 
    Kiểm tra thêm cấu hình màn hình (đọc cả `*.pbxproj`, `.xcconfig` và Info.plist của app target), đối chiếu với mục "Cấu hình dự án" trong `.claude/rules/adaptive-layout.md`: có launch screen, có `UIRequiresFullScreen` không, orientation iPhone và iPad. Chỉ báo người dùng, KHÔNG tự sửa — gỡ `UIRequiresFullScreen` là app co giãn ngay, mở orientation là app xoay được, layout có thể chưa sẵn sàng.
 
-6. Nhắc người dùng: các placeholder trong `.claude/rules/*.md` (architecture, integrations…) cần điền theo dự án — đề nghị giúp điền luôn bằng cách khảo sát codebase (giao agent `explorer`). KHÔNG cài SDK chung nào trong `integrations.md` ở bước init — chúng chỉ được thêm khi một feature cần tới.
+6. SwiftFormat + SwiftLint (hook chỉ chạy chúng khi dự án có config). Dự án cũ đã init (xem bước 2): bỏ qua cả bước, không hỏi, không tạo config — config mới sẽ làm hook format lại và bắt lỗi trên code cũ.
 
-7. Verify: chạy `"${CLAUDE_PLUGIN_ROOT}/scripts/build.sh"` — pass là cài đặt xong.
+   Dự án mới: kiểm tra `command -v swiftformat` và `command -v swiftlint`.
+   - Có đủ cả hai → tạo config luôn, không hỏi.
+   - Thiếu → hỏi người dùng có muốn cài cái còn thiếu không (`brew install <tên>`). Đồng ý thì cài; cài thành công thì tạo config. Từ chối hoặc cài lỗi thì KHÔNG tạo config, và báo rõ hook format/lint sẽ không chạy ở dự án này.
+
+   Tạo config (không ghi đè, và commit cùng dự án để worktree cũng có):
+```bash
+[ -f .swiftformat ] || cp "${CLAUDE_PLUGIN_ROOT}/templates/swiftformat" .swiftformat
+[ -f .swiftlint.yml ] || cp "${CLAUDE_PLUGIN_ROOT}/templates/swiftlint.yml" .swiftlint.yml
+```
+
+7. Nhắc người dùng: các placeholder trong `.claude/rules/*.md` (architecture, integrations…) cần điền theo dự án — đề nghị giúp điền luôn bằng cách khảo sát codebase (giao agent `explorer`). KHÔNG cài SDK chung nào trong `integrations.md` ở bước init — chúng chỉ được thêm khi một feature cần tới.
+
+8. Verify: chạy `"${CLAUDE_PLUGIN_ROOT}/scripts/build.sh"` — pass là cài đặt xong.
