@@ -6,7 +6,7 @@ source "$(dirname "$0")/_common.sh"
 
 # Máy khác SIM_DEVICE có simulator riêng: simulator của worktree đã tạo thì không đổi được device type.
 if [ "${1:-}" = "--device" ]; then
-  SIM_DEVICE="$2"
+  SIM_DEVICE="${2:?--device cần tên device type, ví dụ --device \"iPhone Duo\" (xem: xcrun simctl list devicetypes)}"
   SIM_SUFFIX="-$(printf '%s' "$2" | tr -cs 'A-Za-z0-9' '-')"
   shift 2
 fi

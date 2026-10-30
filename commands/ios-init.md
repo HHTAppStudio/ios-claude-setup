@@ -10,7 +10,9 @@ Cài đặt ios-toolkit vào dự án hiện tại. Plugin không tự load đư
 2. Copy template (KHÔNG ghi đè file đã tồn tại):
 ```bash
 mkdir -p .claude/rules
-cp -n "${CLAUDE_PLUGIN_ROOT}/templates/rules/"*.md .claude/rules/
+for f in "${CLAUDE_PLUGIN_ROOT}/templates/rules/"*.md; do
+  [ -f ".claude/rules/$(basename "$f")" ] || cp "$f" .claude/rules/
+done
 [ -f .claude/ios.env ] || cp "${CLAUDE_PLUGIN_ROOT}/templates/ios.env" .claude/ios.env
 [ -f CLAUDE.md ] || cp "${CLAUDE_PLUGIN_ROOT}/templates/CLAUDE.md" CLAUDE.md
 ```
