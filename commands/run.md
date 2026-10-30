@@ -3,7 +3,7 @@ description: Build + chạy app trên simulator, chụp screenshot để kiểm 
 allowed-tools: Bash("${CLAUDE_PLUGIN_ROOT}"/scripts/run.sh:*), Read
 ---
 
-Chạy `"${CLAUDE_PLUGIN_ROOT}"/scripts/run.sh`.
+Chạy `"${CLAUDE_PLUGIN_ROOT}"/scripts/run.sh $ARGUMENTS`. Mặc định chạy trên `SIM_DEVICE`; `--device "iPhone Duo"` chạy trên máy khác, mỗi loại máy một simulator riêng.
 
 Script tự làm: build cho simulator riêng của worktree → install → launch → chụp screenshot → thu runtime log.
 

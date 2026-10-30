@@ -39,7 +39,7 @@ Plugin này thuần shell script — không cần Node/MCP, hoạt động cả 
 | `/ios-init` | Cài rules + config vào dự án (chạy 1 lần/repo) |
 | `/build` | Build, chỉ in lỗi (full log ra `.claude/logs/`) |
 | `/test [Target/Class]` | Chạy test khoanh vùng hoặc full suite |
-| `/run` | Build + chạy app trên simulator, chụp screenshot để Claude kiểm tra UI |
+| `/run` | Build + chạy app trên simulator, chụp screenshot để Claude kiểm tra UI. `--device "iPhone Duo"` chạy trên máy khác `SIM_DEVICE` |
 | `/clean` | Xoá DerivedData của worktree + dọn log cũ (khi nghi lỗi cache) |
 | `/feature-new <Tên>` | Scaffold feature mới theo chuẩn MVVM + convention có sẵn của dự án |
 | `/wt-new <tên>` | Tạo worktree + branch `claude/<tên>` để làm song song |
@@ -80,6 +80,7 @@ templates/                   # /ios-init copy vào dự án
     ├── swift-coding.md      #   load khi đụng *.swift
     ├── tests.md             #   load khi đụng *Tests*
     ├── feature-scaffold.md  #   load khi đụng Features/
+    ├── adaptive-layout.md   #   load khi đụng Features/, Design/, *App.swift, *.plist, *.pbxproj — iPhone, iPhone Duo, iPad
     └── integrations.md      #   load khi đụng Services/, *.plist, *.pbxproj, Podfile… — SDK chung (AdsKit, AnalyticsKit, NetworkSDK, PurchaseKit, Kingfisher)
 ```
 

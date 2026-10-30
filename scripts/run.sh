@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 # Run wrapper — build, cài và mở app trên simulator RIÊNG của worktree,
 # chụp screenshot + thu log runtime để kiểm tra app chạy thật (không chỉ compile).
-# Usage: ./scripts/run.sh [extra xcodebuild args...]
+# Usage: ./scripts/run.sh [--device "iPhone Duo"] [extra xcodebuild args...]
 source "$(dirname "$0")/_common.sh"
+
+# Máy khác SIM_DEVICE có simulator riêng: simulator của worktree đã tạo thì không đổi được device type.
+if [ "${1:-}" = "--device" ]; then
+  SIM_DEVICE="$2"
+  SIM_SUFFIX="-$(printf '%s' "$2" | tr -cs 'A-Za-z0-9' '-')"
+  shift 2
+fi
 
 CONTAINER_LINE="$(detect_container)"
 IFS='|' read -r FLAG CONTAINER <<< "$CONTAINER_LINE"

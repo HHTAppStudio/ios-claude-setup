@@ -139,8 +139,10 @@ case "$cmd" in
         exit 1
       fi
     fi
-    # Xoá simulator riêng của worktree này (nếu từng được tạo cho test)
-    xcrun simctl delete "$(sim_name_for "$path")" >/dev/null 2>&1 || true
+    # Xoá simulator riêng của worktree này (nếu từng được tạo cho test), kể cả máy từ /run --device
+    xcrun simctl list devices | sed -nE "s/^ *($(sim_name_for "$path")(-[A-Za-z0-9-]+)?) \(.*/\1/p" | while read -r sim; do
+      xcrun simctl delete "$sim" >/dev/null 2>&1 || true
+    done || true
     if [ -d "$path" ]; then
       git -C "$ROOT" worktree remove ${force:+--force} "$path" || {
         echo "ERROR: worktree còn thay đổi chưa commit hoặc file untracked. Kiểm tra lại, hoặc dùng '-f' để bỏ hẳn." >&2

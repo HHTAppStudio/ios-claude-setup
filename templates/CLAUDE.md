@@ -5,8 +5,8 @@
 <!-- Điền thông tin dự án khi cài vào repo. Giữ ngắn — mỗi dòng một fact. -->
 - iOS app
 - Swift, SwiftUI, Combine
-- **Platform mặc định: iOS + iPadOS, deployment target 17.0** — áp dụng cho MỌI target (app, Tests, UITests): `IPHONEOS_DEPLOYMENT_TARGET = 17.0`, `TARGETED_DEVICE_FAMILY = "1,2"`, `SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"`, `SDKROOT = iphoneos`. Đổi được, nhưng phải là quyết định product — Claude không tự đổi.
-- Devices: iPhone, iPad
+- **Platform mặc định: iOS + iPadOS, deployment target 17.0** — áp dụng cho MỌI target (app, Tests, UITests): `IPHONEOS_DEPLOYMENT_TARGET = 17.0`, `TARGETED_DEVICE_FAMILY = "1,2"`, `SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"`, `SDKROOT = iphoneos`. Dùng luôn, không hỏi lại người dùng; chỉ đổi khi người dùng nói — Claude không tự đổi.
+- Devices: iPhone, iPhone Duo, iPad
 - Database local mặc định: **SwiftData** (không dùng Core Data / Realm / SQLite wrapper trừ khi dự án đã có sẵn).
 - SDK chung (không cài sẵn, thêm khi feature cần và luôn được ưu tiên): AdsKit, AnalyticsKit, NetworkSDK, PurchaseKit, Kingfisher — xem `.claude/rules/integrations.md`.
 - Architecture: MVVM + feature-first
@@ -17,13 +17,13 @@
 Rules của dự án nằm trong `.claude/rules/` và được Claude Code tự load:
 
 - `core.md` — rule chung, luôn được load.
-- Các rule còn lại có `paths` frontmatter, chỉ tự load khi đụng vào file khớp glob (Swift code → architecture, folder-structure, swift-coding; test → tests; Features/ → feature-scaffold; Services/, plist, pbxproj → integrations).
+- Các rule còn lại có `paths` frontmatter, chỉ tự load khi đụng vào file khớp glob (Swift code → architecture, folder-structure, swift-coding; test → tests; Features/ → feature-scaffold, adaptive-layout; Design/, *App.swift, plist, pbxproj → adaptive-layout; Services/, plist, pbxproj → integrations).
 - KHÔNG cần chủ động đọc `.claude/rules/` — cơ chế auto-load lo việc đó. Khi thêm rule mới, path-scope nó nếu có thể.
 
 ## Token Policy (bắt buộc)
 
 - KHÔNG chạy `xcodebuild` trực tiếp. Luôn dùng lệnh `/build`, `/test`, `/run` của plugin ios-toolkit — chúng ghi full log ra file và chỉ in lỗi.
-- Thay đổi UI: verify bằng `/run` (chạy app trên simulator + đọc screenshot), không chỉ `/build`.
+- Thay đổi UI: verify bằng `/run` (chạy app trên simulator + đọc screenshot), không chỉ `/build`. Chạm layout thì chạy thêm `/run --device "iPhone Duo"` và một iPad.
 - KHÔNG đọc toàn bộ file lớn; đọc đúng range cần thiết.
 - Việc tìm kiếm / khảo sát nhiều file: giao cho agent `explorer` (haiku).
 - Việc sửa lỗi compile lặp lại, chạy test: giao cho agent `builder` / `test-runner` (sonnet).

@@ -26,7 +26,7 @@ sim_name_for() {
 # Nhờ đó nhiều worktree test song song không tranh nhau một máy ảo.
 ensure_sim() {
   local sim_name udid devtype_id
-  sim_name="$(sim_name_for "$ROOT")"
+  sim_name="$(sim_name_for "$ROOT")${SIM_SUFFIX:-}"
   udid=$(xcrun simctl list devices available | grep -F "$sim_name (" | head -1 \
     | sed -E 's/.*\(([0-9A-Fa-f-]{36})\).*/\1/' || true)
   if [ -z "$udid" ]; then
